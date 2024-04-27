@@ -7,10 +7,7 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildVoiceStates,
-  ],
-  presence: {
-    status: 'dnd'
-  },
+  ]
 });
 
 client.once('ready', () => console.log(`Llegó Mico! [${client.user.tag}]`));
