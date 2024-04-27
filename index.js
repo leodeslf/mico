@@ -1,12 +1,12 @@
-import { Client, Intents, GuildMember } from "discord.js";
+import { Client, GuildMember } from "discord.js";
 import { Player, QueryType } from "discord-player";
 import slashCommands from "./slashCommands.json";
 
 const client = new Client({
   intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_VOICE_STATES,
+    "GUILDS",
+    "GUILD_MESSAGES",
+    "GUILD_VOICE_STATES",
   ],
   presence: {
     status: 'dnd'
@@ -65,13 +65,13 @@ client.on('interactionCreate', async interaction => {
 
   switch (interaction.commandName) {
     case slashCommandPlay:
-      play(query, interaction);
+      play(interaction, query);
       break;
     case slashCommandNext:
       next(interaction);
       break;
     case slashCommandStop:
-      stop();
+      stop(interaction);
       break;
     default:
   }
@@ -79,7 +79,7 @@ client.on('interactionCreate', async interaction => {
 
 });
 
-async function play(query, interaction, guild) {
+async function play(interaction, query) {
   const { guild } = interaction;
   const sourceMatch = query.match(/https.+com\//)?.[0];
   let queryType = 'SEARCH'; // Default, any search on any source.
@@ -123,7 +123,7 @@ async function play(query, interaction, guild) {
   player.play(guild.me.voice.channel, searchResults[0]);
 }
 
-async function next(interaction, guildId) {
+async function next(interaction) {
   const { guildId } = interaction;
   await interaction.deferReply();
   const queue = player.queues.get(guildId);
