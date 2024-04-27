@@ -7,8 +7,6 @@ import {
 import Discord from 'discord.js';
 import ytdl from 'ytdl-core';
 
-// const appId = '1233589799240073226';
-// const publicKey = '2730f6dbc25e9b13b116883e3bd8cc512360acdce4ac2d329a44325ff0721e84';
 let queue = [];
 const player = createAudioPlayer({
   behaviors: { noSubscriber: NoSubscriberBehavior.Pause }
@@ -40,16 +38,6 @@ function playAudio(connection) {
       // connection.destroy(); // TODO, implement with timeout.
     }
   });
-  // const stream = queue.shift();
-  // stream.on('end', () => {
-  //   if (queue.length > 0) {
-  //     playSong(connection, queue);
-  //   } else {
-  //     connection.disconnect();
-  //   }
-  // });
-
-  // connection.play();
 }
 
 function stop(textChannel) {
@@ -104,12 +92,6 @@ client.on('messageCreate', async message => {
     return;
   }
 
-  connection = joinVoiceChannel({
-    adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-    channelId: voiceChannel.id,
-    guildId: voiceChannel.guildId,
-  });
-
   const slicedContent = content.split(' ');
   const command = slicedContent[0].slice(prefixLength).toLowerCase();
 
@@ -126,6 +108,12 @@ client.on('messageCreate', async message => {
     textChannel.send('?');
     return;
   }
+
+  connection = joinVoiceChannel({
+    adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+    channelId: voiceChannel.id,
+    guildId: voiceChannel.guildId,
+  });
 
   switch (command) {
     case playCommand:
