@@ -70,8 +70,7 @@ const availableCommands = [
   stopCommand
 ];
 
-client.once('ready',async  e => {
-  (await e.channels.fetch()).send('HI!');
+client.once('ready', () => {
   console.log(`Llegó ${client.user.tag}!`);
 });
 
