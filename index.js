@@ -1,8 +1,6 @@
 import Discord from 'discord.js';
 import ytdl from 'ytdl-core';
 
-Discord.intents
-
 // const appId = '1233589799240073226';
 // const publicKey = '2730f6dbc25e9b13b116883e3bd8cc512360acdce4ac2d329a44325ff0721e84';
 const token = process.env.BOT_TOKEN;
