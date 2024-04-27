@@ -1,0 +1,14 @@
+[
+  {
+    "name": "toca",
+    "description": "Para tocar un tema (o sumarlo a la playlist)."
+  },
+  {
+    "name": "para",
+    "description": "Para cortar el mambo."
+  },
+  {
+    "name": "pasa",
+    "description": "Para pasar al siguiente tema de la playlist."
+  }
+]
