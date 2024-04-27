@@ -1,12 +1,12 @@
-import { Client, GuildMember } from "discord.js";
+import { Client, GuildMember, GatewayIntentBits } from "discord.js";
 import { Player, QueryType } from "discord-player";
 import slashCommands from "./slashCommands.json";
-
+intent
 const client = new Client({
   intents: [
-    "GUILDS",
-    "GUILD_MESSAGES",
-    "GUILD_VOICE_STATES",
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildVoiceStates,
   ],
   presence: {
     status: 'dnd'
