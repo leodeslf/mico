@@ -1,7 +1,7 @@
 import { Client, GuildMember, GatewayIntentBits } from "discord.js";
 import { Player, QueryType } from "discord-player";
 import slashCommands from "./slashCommands.json";
-intent
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
