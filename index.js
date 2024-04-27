@@ -21,6 +21,10 @@ const prefixLength = prefix.length;
 const commandDeploy = 'deploy';
 
 client.on('messageCreate', async message => {
+  if (message.content.startsWith('mico')) {
+    message.reply(reply('mico debug'));
+  }
+
   const { author, content, guild } = message;
 
   if (!client.application?.owner) await client.application.fetch();
