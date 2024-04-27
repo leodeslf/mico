@@ -59,7 +59,10 @@ const client = new Discord.Client({
     "Guilds",
     "GuildMessages",
     "GuildVoiceStates",
-  ]
+  ],
+  presence: {
+    status: 'dnd'
+  }
 });
 const prefix = 'mico ';
 const prefixLength = prefix.length;
@@ -74,7 +77,7 @@ client.once('ready', () => {
   console.log(`Llegó ${client.user.tag}!`);
 });
 
-client.on('message', async message => {
+client.on('messageCreate', async message => {
   const {
     author,
     channel: textChannel,
