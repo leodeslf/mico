@@ -19,6 +19,7 @@ async function play(textChannel, ytLink) {
     link: audioInfo.videoDetails.video_url,
     title: audioInfo.videoDetails.title
   };
+  console.log(audio);
   textChannel.send(`To play: ${audio.title}`);
   const resource = createAudioResource(
     ytdl(audio.link, { filter: 'audioonly' })
@@ -39,6 +40,8 @@ function playAudio(connection) {
     }
   });
 }
+
+play(undefined, 'https://www.youtube.com/watch?v=FDqtA3Drrh0');
 
 function stop(textChannel) {
   queue = [];
@@ -67,11 +70,12 @@ const availableCommands = [
   stopCommand
 ];
 
-client.once('ready', () => {
+client.once('ready',async  e => {
+  (await e.channels.fetch()).send('HI!');
   console.log(`Llegó ${client.user.tag}!`);
 });
 
-client.on('messageCreate', async message => {
+client.on('message', async message => {
   const {
     author,
     channel: textChannel,
