@@ -44,9 +44,10 @@ client.on('interactionCreate', async interaction => {
   await interaction.guild.fetch();
   if (!interaction.isCommand() || !interaction.guildId) return;
   await interaction.member.fetch();
+  await interaction.member.voice.channel.fetch()
   if (
     !(interaction.member instanceof GuildMember) ||
-    !interaction.member.voice.channel
+    !interaction.member.voice.channel.fetch()
   ) {
     return void interaction.followUp(reply('Solo para canales de voz! 📢'));
   }
