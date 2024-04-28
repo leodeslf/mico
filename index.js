@@ -11,8 +11,8 @@ const client = new Client({
 });
 
 client.once('ready', async () => {
-  console.log(`Llegó Mico! [${client.user.tag}]`)
-  await client.application.fetch()
+  console.log(`Llegó Mico! [${client.user.tag}] 🎤`);
+  await client.application.fetch();
 });
 client.login(process.env.BOT_TOKEN);
 
@@ -79,7 +79,6 @@ const youtubeUrl = 'https://www.youtube.com/'
 const spotifyUrl = 'https://open.spotify.com/'
 
 async function play(interaction, query) {
-  console.log(query);
   const searchResults = await player.search(
     query,
     {
@@ -95,9 +94,13 @@ async function play(interaction, query) {
     return;
   }
   await interaction.channel.fetch();
-  const queue = player.queues.create(
-    interaction.guild, { metadata: interaction.channel }
-  );
+  let queue = player.queues.get(interaction.guild);
+  if (!queue) {
+    queue = player.queues.create(
+      interaction.guild,
+      { metadata: interaction.channel }
+    );
+  }
   try {
     if (!queue.connection) {
       await queue.connect(interaction.member.voice.channel);
@@ -109,13 +112,21 @@ async function play(interaction, query) {
   }
   await interaction.followUp(
     rpl(`Cargando ${searchResults.playlist ?
-        `playlist [${searchResults.playlist.title}]` :
-        `canción [${searchResults.tracks[0].title}]`
+      `[playlist] **${searchResults.playlist.title}**` :
+      `**${searchResults.tracks[0].title}**`
       }... 😉`)
   );
+
+  // !
+  console.debug('tracks:', searchResults.tracks);
+  console.debug('channel:', interaction.guild.me.voice.channel);
   queue.addTrack(searchResults.tracks);
-  if (!queue.isPlaying()) await queue.play();
-  await player.play(interaction.guild.me.voice.channel, searchResults[0]);
+  if (!queue.isPlaying()) await queue.play(searchResults.tracks);
+  await player.play(
+    interaction.guild.me.voice.channel,
+    searchResults.tracks[0],
+    { nodeOptions: { volume: .5 } }
+  );
 }
 
 async function next(interaction) {
