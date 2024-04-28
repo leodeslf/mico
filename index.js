@@ -1,12 +1,14 @@
-import {
-  Client,
-  GatewayIntentBits,
-  GuildMember,
-  InteractionResponse,
-} from "discord.js";
+import { Client, GatewayIntentBits, GuildMember } from "discord.js";
 import { Player } from "discord-player";
 import slashCommands from "./slashCommands.json" assert { type: 'json' };
+import skip from "./skip";
 
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled promise rejection:', reason);
+});
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught exception:', error);
+});
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -15,20 +17,18 @@ const client = new Client({
   ]
 });
 client.once('ready', async () => {
-  console.log(`Llegó Mico! [${client.user.tag}] 🎤`);
+  console.debug(`Llegó Mico! [${client.user.tag}] 🎤`);
   await client.application.fetch();
 });
-client.login(process.env.BOT_TOKEN);
 
 const prefix = 'mico ';
 const prefixLength = prefix.length;
-const commandDeploy = 'deploy';
 
 client.on('messageCreate', async message => {
   await message.fetch();
   if (!message.content.startsWith(prefix) || message.author.bot) return;
   const command = message.content.slice(prefixLength).toLowerCase();
-  if (command === commandDeploy) {
+  if (command === 'deploy') {
     await message.guild.commands.set(slashCommands);
     await message.reply('🐄 ya podés usar `/toca`, `/para`, `/pasa`.');
     return;
@@ -36,12 +36,14 @@ client.on('messageCreate', async message => {
   await message.reply('🦘 eso no sirve...');
 });
 
-const player = new Player(client, {});
-player.extractors.loadDefault();
-const slashCommandPlay = 'toca';
-const slashCommandStop = 'para';
-const slashCommandNext = 'pasa';
-const rpl = content => ({ content, ephemeral: true });
+const player = new Player(client);
+await player.extractors.loadDefault();
+const slashCommandToFunctionMap = {
+  toca: (args) => play(args),
+  pasa: (args) => skip(args),
+  para: (args) => stop(args),
+};
+const rpl = content => ({ content });
 
 client.on('interactionCreate', async interaction => {
   await interaction.guild.fetch();
@@ -59,110 +61,14 @@ client.on('interactionCreate', async interaction => {
     interaction.member.voice.channelId !==
     interaction.guild.members.me.voice.channelId
   ) {
-    await interaction.followUp(rpl('🦆 unámonos en el mismo canal de voz...'));
+    await interaction.followUp(rpl('🦆 ya estoy en otro canal de voz...'));
     return;
   }
-  const query = interaction.options.data[0]?.value;
-  switch (interaction.commandName) {
-    case slashCommandPlay:
-      play(interaction, query);
-      break;
-    case slashCommandNext:
-      next(interaction);
-      break;
-    case slashCommandStop:
-      stop(interaction);
-      break;
-    default:
-  }
+  slashCommandToFunctionMap[interaction.commandName](
+    interaction,
+    interaction.options.getString('query'),
+    interaction.options.getString('force'),
+  );
 });
 
-/**
- * @param {InteractionResponse} interaction 
- * @param {string} query 
- */
-async function play(interaction, query) {
-  await interaction.deferReply();
-  const searchResults = await player.search(query);
-  if (searchResults.isEmpty()) {
-    await interaction.followUp(rpl('🐝 búsqueda sin éxito...'));
-    return;
-  }
-  await interaction.channel.fetch();
-  let queue = player.queues.get(interaction.guild);
-  if (!queue) {
-    queue = player.queues.create(
-      interaction.guild,
-      { metadata: interaction.channel, repeatMode: 0 }
-    );
-  }
-  try {
-    if (!queue.connection) {
-      await queue.connect(interaction.member.voice.channel);
-    }
-  } catch {
-    player.queues.delete(interaction.guildId);
-    await interaction.followUp(rpl('🦖 mico no pudo unirse al canal de voz!'));
-    return;
-  }
-  if (searchResults.playlist) {
-    const { title, estimatedDuration, author, tracks } = searchResults.playlist;
-    await interaction.followUp(
-      rpl(`🦔 agregando playlist...
-**${title}** (~${estimatedDuration}) [${tracks.length} items]
-*${author}*.`)
-    );
-  } else {
-    const { title, duration, author } = searchResults.tracks[0];
-    await interaction.followUp(
-      rpl(`🦔 agregando...
-**${title}** (${duration})
-*${author}*`)
-    );
-  }
-  queue.addTrack(searchResults.tracks);
-  if (!queue.isPlaying()) await queue.play(searchResults.tracks);
-  await player.play(
-    interaction.guild.members.me.voice.channel,
-    searchResults.tracks[0],
-    {
-      audioPlayerOptions: { queue: true },
-      nodeOptions: {
-        leaveOnEndCooldown: 1000 * 3,
-        leaveOnStopCooldown: 1000 * 3,
-        repeatMode: 0,
-        volume: 0.6,
-      }
-    }
-  );
-}
-
-/**
- * @param {InteractionResponse} interaction 
- */
-async function next(interaction) {
-  await interaction.deferReply();
-  const queue = player.queues.get(interaction.guild);
-  if (!queue || !queue.isPlaying()) {
-    await interaction.followUp(rpl('🦧 no quedan más temas.'));
-    return;
-  }
-  queue.node.skip();
-  await interaction.followUp(rpl('🐎 siguiente...'));
-  return;
-}
-
-/**
- * @param {InteractionResponse} interaction 
- */
-async function stop(interaction) {
-  await interaction.deferReply();
-  const queue = player.queues.get(interaction.guild);
-  if (!queue || !queue.isPlaying()) {
-    await interaction.followUp(rpl('🐌 qué querés parar?'));
-    return;
-  }
-  player.queues.delete(queue);
-  await interaction.followUp(rpl('🦥 listo, a mimir!'));
-  return;
-}
+client.login(process.env.BOT_TOKEN);
