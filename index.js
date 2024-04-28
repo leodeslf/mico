@@ -2,7 +2,7 @@ import {
   Client,
   GatewayIntentBits,
   GuildMember,
-  Interaction,
+  InteractionResponse,
 } from "discord.js";
 import { Player } from "discord-player";
 import slashCommands from "./slashCommands.json" assert { type: 'json' };
@@ -78,7 +78,7 @@ client.on('interactionCreate', async interaction => {
 });
 
 /**
- * @param {Interaction} interaction 
+ * @param {InteractionResponse} interaction 
  * @param {string} query 
  */
 async function play(interaction, query) {
@@ -133,7 +133,7 @@ async function play(interaction, query) {
 }
 
 /**
- * @param {Interaction} interaction 
+ * @param {InteractionResponse} interaction 
  */
 async function next(interaction) {
   await interaction.deferReply();
@@ -147,7 +147,7 @@ async function next(interaction) {
 }
 
 /**
- * @param {Interaction} interaction 
+ * @param {InteractionResponse} interaction 
  */
 async function stop(interaction) {
   await interaction.deferReply();
