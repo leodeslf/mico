@@ -59,9 +59,9 @@ client.on('interactionCreate', async interaction => {
     return;
   }
   await interaction.deferReply();
-  console.log(interaction.options.data);
-  const query = interaction.options.get("query");
-  if (!query.match(/https/)) {
+
+  const query = interaction.options.data[0].value;
+  if (query && !query.match(/https/)) {
     interaction.reply(rpl('Eso es una URL? 🤨'));
     return;
   }
@@ -79,19 +79,21 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
+const fallbackSearchEngine = 'SEARCH';
+
 async function play(interaction, query) {
   const sourceMatch = query.match(/https.+com\//)?.[0];
-  let queryType = 'SEARCH'; // Default, any search on any source.
   if (sourceMatch === 'https://www.youtube.com/') {
-    queryType = 'YOUTUBE_VIDEO';
+    var queryType = 'YOUTUBE_VIDEO';
   } else if (sourceMatch === 'https://open.spotify.com/') {
-    queryType = 'SPOTIFY_SONG';
+    var queryType = 'SPOTIFY_SONG';
   }
   const searchResults = await player.search(
     query,
     {
       requestedBy: interaction.member.user,
-      searchEngine: QueryType[queryType]
+      searchEngine: QueryType[queryType || fallbackSearchEngine],
+      fallbackSearchEngine
     }
   );
   if (searchResults.isEmpty()) {

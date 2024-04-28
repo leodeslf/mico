@@ -1,11 +1,12 @@
 [
   {
     "name": "toca",
+    "type": 1,
     "description": "Para tocar un tema (o sumarlo a la playlist).",
     "options": [
       {
         "name": "query",
-        "type": "STRING",
+        "type": 3,
         "description": "URL de YouTube, Spotify, o palabras clave para posterior búsqueda.",
         "required": true
       }
@@ -13,10 +14,12 @@
   },
   {
     "name": "para",
+    "type": 1,
     "description": "Para cortar el mambo."
   },
   {
     "name": "pasa",
+    "type": 1,
     "description": "Para pasar al siguiente tema de la playlist."
   }
 ]
