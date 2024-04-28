@@ -114,16 +114,16 @@ async function play(interaction, query) {
     rpl(`Cargando ${searchResults.playlist ?
       `[playlist] **${searchResults.playlist.title}**` :
       `**${searchResults.tracks[0].title}**`
-      }... 😉`)
+      }... ⌛`)
   );
 
   // !
   console.debug('tracks:', searchResults.tracks);
-  console.debug('channel:', interaction.guild.me.voice.channel);
+  console.debug('channel:', interaction.guild.members.me.voice.channel);
   queue.addTrack(searchResults.tracks);
   if (!queue.isPlaying()) await queue.play(searchResults.tracks);
   await player.play(
-    interaction.guild.me.voice.channel,
+    interaction.guild.members.me.voice.channel,
     searchResults.tracks[0],
     { nodeOptions: { volume: .5 } }
   );
