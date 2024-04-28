@@ -111,12 +111,12 @@ async function play(interaction, query) {
     return;
   }
   if (searchResults.playlist) {
-    await interaction.reply(
+    await interaction.followUp(
       rpl(`🦔 agregando **${searchResults.playlist.title}** (playlist).`)
     );
   } else {
     const { title, duration, author } = searchResults.tracks[0];
-    await interaction.reply(
+    await interaction.followUp(
       rpl(`🦔 agregando **${title}** (${duration}), de ${author}`)
     );
   }
