@@ -25,6 +25,9 @@ client.on('messageCreate', async message => {
 
   const command = message.content.slice(prefixLength).toLowerCase();
 
+  console.log('Message Create After Safety - Command:');
+  console.log(command);
+
   if (command === commandDeploy) {
     await message.guild.commands.set(slashCommands);
     return void await message.reply('Comandos de Mico desplegados... 🎤');
