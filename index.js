@@ -44,7 +44,6 @@ client.on('interactionCreate', async interaction => {
   await interaction.guild.fetch();
   if (!interaction.isChatInputCommand()) return;
   await interaction.member.fetch();
-  // await interaction.member.voice.channel.fetch()
   if (
     !(interaction.member instanceof GuildMember) ||
     !interaction.member.voice.channel
@@ -61,14 +60,6 @@ client.on('interactionCreate', async interaction => {
     return;
   }
   const query = interaction.options.data[0].value;
-  // if (!query) {
-  //   await interaction.followUp(rpl('Y la query? 🤨'));
-  //   return
-  // }
-  // if (query && !query.match(/https/)) {
-  //   interaction.followUp(rpl('Eso es una URL? 🤨'));
-  //   return;
-  // }
   switch (interaction.commandName) {
     case slashCommandPlay:
       play(interaction, query);
@@ -84,21 +75,19 @@ client.on('interactionCreate', async interaction => {
 });
 
 const fallbackSearchEngine = 'SEARCH';
+const youtubeUrl = 'https://www.youtube.com/'
+const spotifyUrl = 'https://open.spotify.com/'
 
 async function play(interaction, query) {
-  const sourceMatch = query.match(/https.+com\//)?.[0];
-  if (sourceMatch === 'https://www.youtube.com/') {
-    var queryType = 'YOUTUBE_VIDEO';
-  } else if (sourceMatch === 'https://open.spotify.com/') {
-    var queryType = 'SPOTIFY_SONG';
-  }
-  console.log(queryType, sourceMatch);
+  console.log(query);
   const searchResults = await player.search(
     query,
     {
-      requestedBy: interaction.member.user,
-      searchEngine: QueryType[queryType || fallbackSearchEngine],
-      fallbackSearchEngine
+      searchEngine: QueryType[
+        (query.includes(youtubeUrl) && 'YOUTUBE_VIDEO') ||
+        (query.includes(spotifyUrl) && 'SPOTIFY_SONG') ||
+        fallbackSearchEngine
+      ]
     }
   );
   if (searchResults.isEmpty()) {
