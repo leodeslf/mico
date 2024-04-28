@@ -22,6 +22,7 @@ client.on('messageCreate', async message => {
   // console.log(client.application.owner); // ?DEBUG
   if (!client.application?.owner) await client.application.fetch();
   console.log('after client.application.fetch:'); // !DEBUG
+  await message.fetch();
   console.log(message.content); // !DEBUG
   console.log(message.author.bot);
 
