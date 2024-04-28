@@ -28,7 +28,7 @@ client.on('messageCreate', async message => {
   const command = message.content.slice(prefixLength).toLowerCase();
   if (command === commandDeploy) {
     await message.guild.commands.set(slashCommands);
-    return void await message.reply('Comandos desplegados! 🎤');
+    return void message.reply('Comandos desplegados! 🎤');
   }
 
   message.reply('🤨');
