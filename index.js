@@ -1,4 +1,9 @@
-import { Client, GuildMember, GatewayIntentBits } from "discord.js";
+import {
+  Client,
+  GatewayIntentBits,
+  GuildMember,
+  Interaction,
+} from "discord.js";
 import { Player } from "discord-player";
 import slashCommands from "./slashCommands.json" assert { type: 'json' };
 
@@ -72,6 +77,10 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
+/**
+ * @param {Interaction} interaction 
+ * @param {string} query 
+ */
 async function play(interaction, query) {
   await interaction.deferReply();
   const searchResults = await player.search(query);
@@ -111,10 +120,21 @@ async function play(interaction, query) {
   await player.play(
     interaction.guild.members.me.voice.channel,
     searchResults.tracks[0],
-    { nodeOptions: { volume: .5 } }
+    {
+      audioPlayerOptions: { queue: true },
+      nodeOptions: {
+        leaveOnEndCooldown: 1000 * 3,
+        leaveOnStopCooldown: 1000 * 3,
+        repeatMode: 0,
+        volume: 0.6
+      }
+    }
   );
 }
 
+/**
+ * @param {Interaction} interaction 
+ */
 async function next(interaction) {
   await interaction.deferReply();
   const queue = player.queues.get(interaction.guild);
@@ -122,12 +142,13 @@ async function next(interaction) {
     await interaction.followUp(rpl('🦧 no quedan más temas.'));
     return;
   }
-  // const success = queue.removeTrack(queue.currentTrack);
   await interaction.followUp(rpl('🐎 siguiente...'));
-  player.events.emit("playerSkip", queue, queue.currentTrack, 'MANUAL', 'Yes.');
   return;
 }
 
+/**
+ * @param {Interaction} interaction 
+ */
 async function stop(interaction) {
   await interaction.deferReply();
   const queue = player.queues.get(interaction.guild);
@@ -135,7 +156,8 @@ async function stop(interaction) {
     await interaction.followUp(rpl('🐌 qué querés parar?'));
     return;
   }
-  queue.clear();
+  player.queues.delete(queue);
+  // queue.clear();
   await interaction.followUp(rpl('🦥 listo, a mimir!'));
   return;
 }
