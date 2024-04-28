@@ -32,7 +32,8 @@ export default async function play(interaction, query, force) {
       ephemeral: false
     });
   }
-  console.debug("CHANELLLL", interaction.guild.members.me.voice.channel);
+  await interaction.guild.members.me.fetch()
+  console.debug("CHANELLLL", interaction.guild.members.me);
   try {
     await player.play(
       interaction.guild.members.me.voice.channel,
