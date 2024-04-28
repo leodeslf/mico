@@ -18,7 +18,7 @@ const prefixLength = prefix.length;
 const commandDeploy = 'deploy';
 
 client.on('messageCreate', async message => {
-  console.log('Message Create:', message); // !DEBUG
+  console.log('Message Create:'); // !DEBUG
 
   if (!client.application?.owner) await client.application.fetch();
   if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -40,7 +40,7 @@ const slashCommandNext = 'pasa';
 const reply = content => ({ content, ephemeral: true });
 
 client.on('interactionCreate', async interaction => {
-  console.log('Interaction Create:', interaction); // !DEBUG
+  console.log('Interaction Create:'); // !DEBUG
   
   const { guild, member } = interaction;
 
