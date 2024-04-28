@@ -1,7 +1,15 @@
 [
   {
     "name": "toca",
-    "description": "Para tocar un tema (o sumarlo a la playlist)."
+    "description": "Para tocar un tema (o sumarlo a la playlist).",
+    "options": [
+      {
+        "name": "query",
+        "type": "STRING",
+        "description": "URL de YouTube, Spotify, o palabras clave para posterior búsqueda.",
+        "required": true
+      }
+    ]
   },
   {
     "name": "para",

@@ -22,8 +22,6 @@ const commandDeploy = 'deploy';
 
 client.on('messageCreate', async message => {
   await message.fetch();
-  // await message.guild.fetch()
-  // await message.author.fetch();
   if (!message.content.startsWith(prefix) || message.author.bot) return;
   const command = message.content.slice(prefixLength).toLowerCase();
   if (command === commandDeploy) {
@@ -31,7 +29,6 @@ client.on('messageCreate', async message => {
     await message.reply('Comandos desplegados! 🎤');
     return;
   }
-
   await message.reply('🤨');
 });
 
@@ -43,18 +40,16 @@ const rpl = content => ({ content, ephemeral: true });
 
 client.on('interactionCreate', async interaction => {
   await interaction.guild.fetch();
-  if (!interaction.isCommand() || !interaction.guildId) return;
+  if (!interaction.isChatInputCommand()) return;
   await interaction.member.fetch();
-  await interaction.member.voice.channel.fetch()
+  // await interaction.member.voice.channel.fetch()
   if (
     !(interaction.member instanceof GuildMember) ||
-    !interaction.member.voice.channel.fetch()
+    !interaction.member.voice.channel
   ) {
     await interaction.followUp(rpl('Solo para canales de voz! 📢'));
     return;
   }
-  // await interaction.guild.members.fetch();
-  // await interaction.guild.members.me.fetch();
   if (
     interaction.guild.members.me.voice.channelId &&
     interaction.member.voice.channelId !==
@@ -63,18 +58,12 @@ client.on('interactionCreate', async interaction => {
     await interaction.followUp(rpl('No estamos en el mismo canal de voz! 📢'));
     return;
   }
-
   await interaction.deferReply();
-
-  console.log(await interaction.options.getString("query"));
-
-  const query = await interaction.options.getString("query");
-
+  const query = interaction.options.get("query");
   if (!query.match(/https/)) {
     interaction.reply(rpl('Eso es una URL? 🤨'));
     return;
   }
-
   switch (interaction.commandName) {
     case slashCommandPlay:
       play(interaction, query);
