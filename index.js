@@ -74,7 +74,7 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
-const fallbackSearchEngine = 'SEARCH';
+const fallbackSearchEngine = 'AUTO';
 const youtubeUrl = 'https://www.youtube.com/'
 const spotifyUrl = 'https://open.spotify.com/'
 
