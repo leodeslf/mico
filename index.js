@@ -60,11 +60,14 @@ client.on('interactionCreate', async interaction => {
     return;
   }
   const query = interaction.options.data[0].value;
-  console.log(query);
-  if (query && !query.match(/https/)) {
-    interaction.followUp(rpl('Eso es una URL? 🤨'));
-    return;
+  if (!query) {
+    await interaction.followUp(rpl('Y la query? 🤨'));
+    return
   }
+  // if (query && !query.match(/https/)) {
+  //   interaction.followUp(rpl('Eso es una URL? 🤨'));
+  //   return;
+  // }
   switch (interaction.commandName) {
     case slashCommandPlay:
       play(interaction, query);
