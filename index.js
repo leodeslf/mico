@@ -19,11 +19,12 @@ const commandDeploy = 'deploy';
 
 client.on('messageCreate', async message => {
   console.log('message create, owner:'); // !DEBUG
-  console.log(client.application.owner);
+  console.log(client.application.owner); // !DEBUG
 
   if (!client.application?.owner) await client.application.fetch();
   
   console.log('message create after client.application.fetch:'); // !DEBUG
+  console.log(client.application.owner); // !DEBUG
 
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 
