@@ -66,10 +66,9 @@ client.on('interactionCreate', async interaction => {
 
   await interaction.deferReply();
 
-  console.log(interaction.options);
-  console.log(interaction.options.get("query"));
+  console.log(interaction.options.getString("query"));
 
-  const query = interaction.options.get("query").value;
+  const query = interaction.options.getString("query");
 
   if (!query.match(/https/)) {
     interaction.reply(rpl('Eso es una URL? 🤨'));
