@@ -10,7 +10,10 @@ const client = new Client({
   ]
 });
 
-client.once('ready', () => console.log(`Llegó Mico! [${client.user.tag}]`));
+client.once('ready', async () => {
+  console.log(`Llegó Mico! [${client.user.tag}]`)
+  await client.application.fetch()
+});
 client.login(process.env.BOT_TOKEN);
 
 const prefix = 'mico ';
@@ -18,24 +21,14 @@ const prefixLength = prefix.length;
 const commandDeploy = 'deploy';
 
 client.on('messageCreate', async message => {
-  // console.log('message create, owner:'); // ?DEBUG
-  // console.log(client.application.owner); // ?DEBUG
-  if (!client.application?.owner) await client.application.fetch();
-  console.log('after client.application.fetch:'); // !DEBUG
   await message.fetch();
-  console.log(message.content); // !DEBUG
-  console.log(message.author.bot);
-
+  // await message.guild.fetch()
+  // await message.author.fetch();
   if (!message.content.startsWith(prefix) || message.author.bot) return;
-
   const command = message.content.slice(prefixLength).toLowerCase();
-
-  console.log('message create after safety, command:'); // !DEBUG
-  console.log(command); // !DEBUG
-
   if (command === commandDeploy) {
     await message.guild.commands.set(slashCommands);
-    return void await message.reply('Comandos de Mico desplegados... 🎤');
+    return void await message.reply('Comandos de desplegados! 🎤');
   }
 
   message.reply('🤨');
@@ -48,26 +41,32 @@ const slashCommandNext = 'pasa';
 const reply = content => ({ content, ephemeral: true });
 
 client.on('interactionCreate', async interaction => {
-  console.log('Interaction Create:'); // !DEBUG
-  
-  const { guild, member } = interaction;
-
+  await interaction.guild.fetch();
   if (!interaction.isCommand() || !interaction.guildId) return;
+  await interaction.member.fetch();
   if (
-    !(member instanceof GuildMember) ||
-    !member.voice.channel || (
-      guild.members.me.voice.channelId &&
-      member.voice.channelId !== guild.me.voice.channelId
-    )
+    !(interaction.member instanceof GuildMember) ||
+    !interaction.member.voice.channel
   ) {
-    return void interaction.reply(reply('Solo para canales de voz! 📢'));
+    return void interaction.followUp(reply('Solo para canales de voz! 📢'));
+  }
+  // await interaction.guild.members.fetch();
+  // await interaction.guild.members.me.fetch();
+  if (
+    interaction.guild.members.me.voice.channelId &&
+    interaction.member.voice.channelId !==
+    interaction.guild.members.me.voice.channelId
+  ) {
+    return void interaction.followUp(
+      reply('No estamos en el mismo canal de voz! 📢')
+    );
   }
 
   await interaction.deferReply();
   const query = interaction.options.get("query").value;
 
   if (!query.match(/https/)) return void interaction.reply(
-    reply('URL inválida.')
+    reply('Eso es una URL? 🤨')
   );
 
   switch (interaction.commandName) {
@@ -85,7 +84,6 @@ client.on('interactionCreate', async interaction => {
 });
 
 async function play(interaction, query) {
-  const { guild } = interaction;
   const sourceMatch = query.match(/https.+com\//)?.[0];
   let queryType = 'SEARCH'; // Default, any search on any source.
 
@@ -108,11 +106,13 @@ async function play(interaction, query) {
   }
 
   const queue = player.queues.create(
-    guild, { metadata: interaction.channel }
+    interaction.guild, { metadata: interaction.channel }
   );
 
   try {
-    if (!queue.connection) await queue.connect(interaction.member.voice.channel);
+    if (!queue.connection) {
+      await queue.connect(interaction.member.voice.channel);
+    }
   } catch {
     void player.queues.delete(interaction.guildId);
     return void interaction.followUp(
@@ -125,18 +125,15 @@ async function play(interaction, query) {
   );
   queue.addTrack(searchResults.tracks);
   if (!queue.isPlaying()) await queue.play();
-  player.play(guild.me.voice.channel, searchResults[0]);
+  player.play(interaction.guild.me.voice.channel, searchResults[0]);
 }
 
 async function next(interaction) {
-  const { guildId } = interaction;
   await interaction.deferReply();
-  const queue = player.queues.get(guildId);
-
-  if (!queue || !queue.isPlaying()) return void interaction.followUp(
-    reply('No hay siguiente... 😶')
-  );
-
+  const queue = player.queues.get(interaction.guildId);
+  if (!queue || !queue.isPlaying()) {
+    return void interaction.followUp(reply('No hay siguiente... 😶'));
+  }
   const currentTrack = queue.currentTrack;
   const success = queue.removeTrack(currentTrack);
   return void interaction.followUp(
@@ -145,12 +142,11 @@ async function next(interaction) {
 }
 
 async function stop(interaction) {
-  const { guildId } = interaction;
   await interaction.deferReply();
-  const queue = player.queues.get(guildId);
-  if (!queue || !queue.isPlaying()) return void interaction.followUp(
-    reply('No hay siguiente... 😶')
-  );
+  const queue = player.queues.get(interaction.guildId);
+  if (!queue || !queue.isPlaying()) {
+    return void interaction.followUp(reply('No hay siguiente... 😶'));
+  }
   queue.delete();
   return void interaction.followUp(
     reply('Mambo cortado con éxito. 😬')
