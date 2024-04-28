@@ -57,7 +57,7 @@ client.on('interactionCreate', async interaction => {
     await interaction.followUp(rpl('🦆 unámonos en el mismo canal de voz...'));
     return;
   }
-  const query = interaction.options.data[0].value;
+  const query = interaction.options.data[0]?.value;
   // const enginePreference = interaction.options.data[0]
   switch (interaction.commandName) {
     case slashCommandPlay:
