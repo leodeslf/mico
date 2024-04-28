@@ -58,7 +58,6 @@ client.on('interactionCreate', async interaction => {
     return;
   }
   const query = interaction.options.data[0]?.value;
-  // const enginePreference = interaction.options.data[0]
   switch (interaction.commandName) {
     case slashCommandPlay:
       play(interaction, query);
@@ -73,20 +72,9 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
-// const fallbackSearchEngine = 'AUTO';
-// const youtubeUrl = 'https://www.youtube.com/'
-// const spotifyUrl = 'https://open.spotify.com/'
-
 async function play(interaction, query) {
   await interaction.deferReply();
   const searchResults = await player.search(query);
-  // {
-  //   searchEngine: QueryType[
-  //     (query.includes(youtubeUrl) && 'YOUTUBE_VIDEO') ||
-  //     (query.includes(spotifyUrl) && 'SPOTIFY_SONG') ||
-  //     fallbackSearchEngine
-  //   ]
-  // }
   if (searchResults.isEmpty()) {
     await interaction.followUp(rpl('🐝 búsqueda sin éxito...'));
     return;
@@ -134,7 +122,8 @@ async function next(interaction) {
     await interaction.followUp(rpl('🦧 no quedan más temas.'));
     return;
   }
-  const success = queue.removeTrack(queue.currentTrack);
+  // const success = queue.removeTrack(queue.currentTrack);
+  player.events.emit("playerSkip", queue, queue.currentTrack, 'MANUAL', 'Yes.');
   await interaction.followUp(
     rpl(success ? '🐎 siguiente...' : '🐞 no se puedo...')
   );
