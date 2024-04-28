@@ -147,6 +147,7 @@ async function next(interaction) {
     await interaction.followUp(rpl('🦧 no quedan más temas.'));
     return;
   }
+  queue.node.skip();
   await interaction.followUp(rpl('🐎 siguiente...'));
   return;
 }
