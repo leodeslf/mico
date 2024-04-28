@@ -6,7 +6,6 @@ import { useMainPlayer/* , useQueue */ } from "discord-player";
  * @param {string} query 
  */
 export default async function play(interaction, query, force) {
-  // await interaction.deferReply();
   const player = useMainPlayer(interaction.guildId);
   // const queue = useQueue(interaction.guildId);
   // TODO, select search engine.
@@ -22,17 +21,16 @@ export default async function play(interaction, query, force) {
   if (searchResults.playlist) {
     const { title, estimatedDuration, author, tracks } = searchResults.playlist;
     await interaction.followUp({
-      content: `🐘 tocando playlist...\n**${title}** (~${estimatedDuration}) [${tracks.length} items]\n*${author}*.`,
+      content: `🐘 tocando playlist:\n**${title}** (~${estimatedDuration}) [${tracks.length} items]\n*${author}*.`,
       ephemeral: false
     });
   } else {
     const { title, duration, author } = searchResults.tracks[0];
     await interaction.followUp({
-      content: `🦔 tocando...\n**${title}** (${duration})\n*${author}*`,
+      content: `🦔 tocando:\n**${title}** (${duration})\n*${author}*`,
       ephemeral: false
     });
   }
-  await interaction.guild.members.me.fetch()
   console.debug("CHANELLLL", interaction.guild.members.me);
   try {
     await player.play(

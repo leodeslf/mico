@@ -49,9 +49,9 @@ const slashCommandToFunctionMap = {
 };
 
 client.on('interactionCreate', async interaction => {
+  if (!interaction.isChatInputCommand()) return;
   await interaction.deferReply();
   await interaction.guild.fetch();
-  if (!interaction.isChatInputCommand()) return;
   await interaction.member.fetch();
   if (
     !(interaction.member instanceof GuildMember) ||
@@ -72,7 +72,7 @@ client.on('interactionCreate', async interaction => {
       ephemeral: true
     });
   }
-  slashCommandToFunctionMap[interaction.commandName](
+  await slashCommandToFunctionMap[interaction.commandName](
     interaction,
     interaction.options.getString('query'),
     interaction.options.getString('force'),

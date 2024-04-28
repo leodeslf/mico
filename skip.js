@@ -5,7 +5,6 @@ import { useQueue } from "discord-player";
  * @param {ChatInputCommandInteraction} interaction 
  */
 export default async function skip(interaction) {
-  await interaction.deferReply();
   const queue = useQueue(interaction.guild);
   if (!queue || !queue.isPlaying()) {
     return void await interaction.followUp({
