@@ -106,13 +106,18 @@ async function play(interaction, query) {
     return;
   }
   if (searchResults.playlist) {
+    const { title, estimatedDuration, author, tracks } = searchResults.playlist;
     await interaction.followUp(
-      rpl(`🦔 agregando **${searchResults.playlist.title}** (playlist).`)
+      rpl(`🦔 agregando playlist...
+**${title}** (~${estimatedDuration}) [${tracks.length} items]
+*${author}*.`)
     );
   } else {
     const { title, duration, author } = searchResults.tracks[0];
     await interaction.followUp(
-      rpl(`🦔 agregando **${title}** (${duration}), de ${author}`)
+      rpl(`🦔 agregando...
+**${title}** (${duration})
+*${author}*`)
     );
   }
   queue.addTrack(searchResults.tracks);
@@ -157,7 +162,6 @@ async function stop(interaction) {
     return;
   }
   player.queues.delete(queue);
-  // queue.clear();
   await interaction.followUp(rpl('🦥 listo, a mimir!'));
   return;
 }
