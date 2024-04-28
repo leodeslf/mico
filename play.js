@@ -11,7 +11,7 @@ export default async function play(interaction, query, force) {
   // const queue = useQueue(interaction.guildId);
   // TODO, select search engine.
   const searchResults = await player
-    .search(query, { requestedBy: interaction.user, searchEngine })
+    .search(query, { requestedBy: interaction.user })
     .catch(() => null);
   if (!searchResults?.hasTracks()) {
     return void await interaction.followUp({
