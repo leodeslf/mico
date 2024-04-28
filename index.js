@@ -43,9 +43,9 @@ client.on('messageCreate', async message => {
 const player = new Player(client);
 await player.extractors.loadDefault();
 const slashCommandToFunctionMap = {
-  toca: (args) => play(args),
-  pasa: (args) => skip(args),
-  para: (args) => stop(args),
+  toca: (interaction, query, force) => play(interaction, query, force),
+  pasa: interaction => skip(interaction),
+  para: interaction => stop(interaction),
 };
 
 client.on('interactionCreate', async interaction => {
