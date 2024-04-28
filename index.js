@@ -39,6 +39,7 @@ const slashCommandNext = 'pasa';
 const rpl = content => ({ content, ephemeral: true });
 
 client.on('interactionCreate', async interaction => {
+  await interaction.deferReply();
   await interaction.guild.fetch();
   if (!interaction.isChatInputCommand()) return;
   await interaction.member.fetch();
@@ -59,9 +60,9 @@ client.on('interactionCreate', async interaction => {
     return;
   }
   const query = interaction.options.data[0].value;
+  console.log(query);
   if (query && !query.match(/https/)) {
-    await interaction.deferReply();
-    interaction.reply(rpl('Eso es una URL? 🤨'));
+    interaction.followUp(rpl('Eso es una URL? 🤨'));
     return;
   }
   switch (interaction.commandName) {
