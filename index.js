@@ -94,6 +94,7 @@ async function play(interaction, query) {
     await interaction.followUp(rpl('Búsqueda sin éxito... 🤔'));
     return;
   }
+  await interaction.channel.fetch();
   const queue = player.queues.create(
     interaction.guild, { metadata: interaction.channel }
   );
@@ -107,7 +108,10 @@ async function play(interaction, query) {
     return;
   }
   await interaction.followUp(
-    rpl(`Cargando ${searchResults.playlist ? 'playlist' : 'canción'}... 😉`)
+    rpl(`Cargando ${searchResults.playlist ?
+        `playlist [${searchResults.playlist.title}]` :
+        `canción [${searchResults.tracks[0].title}]`
+      }... 😉`)
   );
   queue.addTrack(searchResults.tracks);
   if (!queue.isPlaying()) await queue.play();
