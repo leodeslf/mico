@@ -18,19 +18,13 @@ const prefixLength = prefix.length;
 const commandDeploy = 'deploy';
 
 client.on('messageCreate', async message => {
-  if (message.content.startsWith('mico')) {
-    message.reply(reply('mico debug'));
-  }
-
-  const { author, content, guild } = message;
-
   if (!client.application?.owner) await client.application.fetch();
-  if (!content.startsWith(prefix) || author.bot) return;
+  if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-  const command = content.slice(prefixLength).toLowerCase();
+  const command = message.content.slice(prefixLength).toLowerCase();
 
-  if (command === commandDeploy && author.id !== client.application?.owner?.id) {
-    await guild.commands.set(slashCommands);
+  if (command === commandDeploy) {
+    await message.guild.commands.set(slashCommands);
     return void await message.reply('Comandos de Mico desplegados... 🎤');
   }
 
