@@ -123,10 +123,8 @@ async function next(interaction) {
     return;
   }
   // const success = queue.removeTrack(queue.currentTrack);
+  await interaction.followUp(rpl('🐎 siguiente...'));
   player.events.emit("playerSkip", queue, queue.currentTrack, 'MANUAL', 'Yes.');
-  await interaction.followUp(
-    rpl(success ? '🐎 siguiente...' : '🐞 no se puedo...')
-  );
   return;
 }
 
