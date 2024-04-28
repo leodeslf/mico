@@ -59,7 +59,6 @@ client.on('interactionCreate', async interaction => {
     return;
   }
   await interaction.deferReply();
-
   const query = interaction.options.data[0].value;
   if (query && !query.match(/https/)) {
     interaction.reply(rpl('Eso es una URL? 🤨'));
@@ -88,6 +87,7 @@ async function play(interaction, query) {
   } else if (sourceMatch === 'https://open.spotify.com/') {
     var queryType = 'SPOTIFY_SONG';
   }
+  console.log(queryType, sourceMatch);
   const searchResults = await player.search(
     query,
     {
