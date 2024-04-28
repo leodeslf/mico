@@ -1,5 +1,5 @@
 import { Client, GuildMember, GatewayIntentBits } from "discord.js";
-import { Player, QueryType } from "discord-player";
+import { Player } from "discord-player";
 import slashCommands from "./slashCommands.json" assert { type: 'json' };
 
 const client = new Client({
@@ -9,7 +9,6 @@ const client = new Client({
     GatewayIntentBits.GuildVoiceStates,
   ]
 });
-
 client.once('ready', async () => {
   console.log(`Llegó Mico! [${client.user.tag}] 🎤`);
   await client.application.fetch();
@@ -59,6 +58,7 @@ client.on('interactionCreate', async interaction => {
     return;
   }
   const query = interaction.options.data[0].value;
+  // const enginePreference = interaction.options.data[0]
   switch (interaction.commandName) {
     case slashCommandPlay:
       play(interaction, query);
@@ -73,22 +73,20 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
-const fallbackSearchEngine = 'AUTO';
-const youtubeUrl = 'https://www.youtube.com/'
-const spotifyUrl = 'https://open.spotify.com/'
+// const fallbackSearchEngine = 'AUTO';
+// const youtubeUrl = 'https://www.youtube.com/'
+// const spotifyUrl = 'https://open.spotify.com/'
 
 async function play(interaction, query) {
   await interaction.deferReply();
-  const searchResults = await player.search(
-    query,
-    {
-      searchEngine: QueryType[
-        (query.includes(youtubeUrl) && 'YOUTUBE_VIDEO') ||
-        (query.includes(spotifyUrl) && 'SPOTIFY_SONG') ||
-        fallbackSearchEngine
-      ]
-    }
-  );
+  const searchResults = await player.search(query);
+  // {
+  //   searchEngine: QueryType[
+  //     (query.includes(youtubeUrl) && 'YOUTUBE_VIDEO') ||
+  //     (query.includes(spotifyUrl) && 'SPOTIFY_SONG') ||
+  //     fallbackSearchEngine
+  //   ]
+  // }
   if (searchResults.isEmpty()) {
     await interaction.followUp(rpl('🐝 búsqueda sin éxito...'));
     return;
@@ -136,10 +134,9 @@ async function next(interaction) {
     await interaction.followUp(rpl('🦧 no quedan más temas.'));
     return;
   }
-  const currentTrack = queue.currentTrack;
-  const success = queue.removeTrack(currentTrack);
+  const success = queue.removeTrack(queue.currentTrack);
   await interaction.followUp(
-    rpl(success ? '🐎 pasando...' : '🐞 no se puedo...')
+    rpl(success ? '🐎 siguiente...' : '🐞 no se puedo...')
   );
   return;
 }
@@ -148,10 +145,10 @@ async function stop(interaction) {
   await interaction.deferReply();
   const queue = player.queues.get(interaction.guild);
   if (!queue || !queue.isPlaying()) {
-    await interaction.followUp(rpl('🐌 a quién querés parar?'));
+    await interaction.followUp(rpl('🐌 qué querés parar?'));
     return;
   }
-  queue.delete();
+  queue.clear();
   await interaction.followUp(rpl('🦥 listo, a mimir!'));
   return;
 }

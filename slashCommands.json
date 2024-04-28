@@ -7,8 +7,23 @@
       {
         "name": "query",
         "type": 3,
-        "description": "URL de YouTube, Spotify, o palabras clave para posterior búsqueda.",
+        "description": "URL (YouTube, Spotify), o palabras clave para posterior búsqueda.",
         "required": true
+      },
+      {
+        "name": "force",
+        "type": 3,
+        "description": "Para especificar un motor de búsqueda.",
+        "choices": [
+          {
+            "name": "youtube",
+            "value": "YOUTUBE_SEARCH"
+          },
+          {
+            "name": "spotify",
+            "value": "SPOTIFY_SEARCH"
+          }
+        ]
       }
     ]
   },
