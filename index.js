@@ -1,7 +1,9 @@
 import { Client, GatewayIntentBits, GuildMember } from "discord.js";
 import { Player } from "discord-player";
-import slashCommands from "./slashCommands.json" assert { type: 'json' };
+import play from "./play";
 import skip from "./skip";
+import slashCommands from "./slashCommands.json" assert { type: 'json' };
+import stop from "./stop";
 
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled promise rejection:', reason);
