@@ -8,10 +8,14 @@ export default async function stop(interaction) {
   await interaction.deferReply();
   const queue = useQueue(interaction.guildId);
   if (!queue || !queue.isPlaying()) {
-    await interaction.followUp(rpl('🐌 qué querés parar?'));
-    return;
+    return void await interaction.followUp({
+      content: '🐌 qué querés parar?',
+      ephemeral: true
+    });
   }
   queue.node.stop();
-  await interaction.followUp(rpl('🦥 listo, a mimir!'));
-  return;
+  return void await interaction.followUp({
+    content: '🦥 listo, a mimir!',
+    ephemeral: false
+  });
 }

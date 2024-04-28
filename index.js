@@ -5,12 +5,13 @@ import skip from "./skip.js";
 import slashCommands from "./slashCommands.json" assert { type: 'json' };
 import stop from "./stop.js";
 
-process.on('unhandledRejection', (reason) => {
+process.on('unhandledRejection', reason => {
   console.error('Unhandled promise rejection:', reason);
 });
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   console.error('Uncaught exception:', error);
 });
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -32,8 +33,9 @@ client.on('messageCreate', async message => {
   const command = message.content.slice(prefixLength).toLowerCase();
   if (command === 'deploy') {
     await message.guild.commands.set(slashCommands);
-    await message.reply('🐄 ya podés usar `/toca`, `/para`, `/pasa`.');
-    return;
+    return void await message.reply(
+      '🐄 ya podés usar `/toca`, `/para`, `/pasa`.'
+    );
   }
   await message.reply('🦘 eso no sirve...');
 });
@@ -45,7 +47,6 @@ const slashCommandToFunctionMap = {
   pasa: (args) => skip(args),
   para: (args) => stop(args),
 };
-const rpl = content => ({ content });
 
 client.on('interactionCreate', async interaction => {
   await interaction.guild.fetch();
@@ -55,16 +56,20 @@ client.on('interactionCreate', async interaction => {
     !(interaction.member instanceof GuildMember) ||
     !interaction.member.voice.channel
   ) {
-    await interaction.followUp(rpl('🦗 primero entrá a un canal de voz...'));
-    return;
+    return void await interaction.followUp({
+      content: '🦗 primero entrá a un canal de voz...',
+      ephemeral: true
+    });
   }
   if (
     interaction.guild.members.me.voice.channelId &&
     interaction.member.voice.channelId !==
     interaction.guild.members.me.voice.channelId
   ) {
-    await interaction.followUp(rpl('🦆 ya estoy en otro canal de voz...'));
-    return;
+    return void await interaction.followUp({
+      content: '🦆 ya estoy en otro canal de voz...',
+      ephemeral: true
+    });
   }
   slashCommandToFunctionMap[interaction.commandName](
     interaction,

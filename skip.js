@@ -8,10 +8,14 @@ export default async function skip(interaction) {
   await interaction.deferReply();
   const queue = useQueue(interaction.guild);
   if (!queue || !queue.isPlaying()) {
-    await interaction.followUp(rpl('🦧 no quedan más temas.'));
-    return;
+    return void await interaction.followUp({
+      content: '🦧 no quedan más temas.',
+      ephemeral: true
+    });
   }
   queue.node.skip();
-  await interaction.followUp(rpl('🐎 pasando a la siguiente...'));
-  return;
+  return void await interaction.followUp({
+    content: '🐎 pasando a la siguiente...',
+    ephemeral: false
+  });
 }

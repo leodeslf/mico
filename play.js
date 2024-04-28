@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { useMainPlayer, useQueue } from "discord-player";
+import { useMainPlayer/* , useQueue */ } from "discord-player";
 
 /**
  * @param {ChatInputCommandInteraction} interaction 
@@ -8,25 +8,29 @@ import { useMainPlayer, useQueue } from "discord-player";
 export default async function play(interaction, query, force) {
   await interaction.deferReply();
   const player = useMainPlayer(interaction.guildId);
-  const queue = useQueue(interaction.guildId);
+  // const queue = useQueue(interaction.guildId);
   // TODO, select search engine.
   const searchResults = await player
     .search(query, { requestedBy: interaction.user, searchEngine })
     .catch(() => null);
   if (!searchResults?.hasTracks()) {
-    await interaction.followUp(rpl('🐝 búsqueda sin éxito...'));
-    return;
+    return void await interaction.followUp({
+      content: '🐝 búsqueda sin éxito...',
+      ephemeral: true
+    });
   }
   if (searchResults.playlist) {
     const { title, estimatedDuration, author, tracks } = searchResults.playlist;
-    await interaction.followUp(
-      rpl(`🐘 tocando playlist...\n**${title}** (~${estimatedDuration}) [${tracks.length} items]\n*${author}*.`)
-    );
+    await interaction.followUp({
+      content: `🐘 tocando playlist...\n**${title}** (~${estimatedDuration}) [${tracks.length} items]\n*${author}*.`,
+      ephemeral: false
+    });
   } else {
     const { title, duration, author } = searchResults.tracks[0];
-    await interaction.followUp(
-      rpl(`🦔 tocando...\n**${title}** (${duration})\n*${author}*`)
-    );
+    await interaction.followUp({
+      content: `🦔 tocando...\n**${title}** (${duration})\n*${author}*`,
+      ephemeral: false
+    });
   }
   try {
     await player.play(
@@ -44,7 +48,10 @@ export default async function play(interaction, query, force) {
       }
     );
   } catch (error) {
-    await interaction.followUp(rpl(`🦎 algo salió mal...`));
+    await interaction.followUp({
+      content: `🦎 algo salió mal...`,
+      ephemeral: true
+    });
     console.error(error);
   }
 }
