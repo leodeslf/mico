@@ -6,7 +6,7 @@ import { useMainPlayer/* , useQueue */ } from "discord-player";
  * @param {string} query 
  */
 export default async function play(interaction, query, force) {
-  await interaction.deferReply();
+  // await interaction.deferReply();
   const player = useMainPlayer(interaction.guildId);
   // const queue = useQueue(interaction.guildId);
   // TODO, select search engine.

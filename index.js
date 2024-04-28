@@ -49,6 +49,7 @@ const slashCommandToFunctionMap = {
 };
 
 client.on('interactionCreate', async interaction => {
+  await interaction.deferReply();
   await interaction.guild.fetch();
   if (!interaction.isChatInputCommand()) return;
   await interaction.member.fetch();
