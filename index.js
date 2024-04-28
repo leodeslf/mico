@@ -36,7 +36,7 @@ client.on('messageCreate', async message => {
   await message.reply('🦘 eso no sirve...');
 });
 
-const player = new Player(client);
+const player = new Player(client, {});
 player.extractors.loadDefault();
 const slashCommandPlay = 'toca';
 const slashCommandStop = 'para';
@@ -93,7 +93,7 @@ async function play(interaction, query) {
   if (!queue) {
     queue = player.queues.create(
       interaction.guild,
-      { metadata: interaction.channel }
+      { metadata: interaction.channel, repeatMode: 0 }
     );
   }
   try {
@@ -131,7 +131,7 @@ async function play(interaction, query) {
         leaveOnEndCooldown: 1000 * 3,
         leaveOnStopCooldown: 1000 * 3,
         repeatMode: 0,
-        volume: 0.6
+        volume: 0.6,
       }
     }
   );
