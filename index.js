@@ -137,7 +137,7 @@ async function next(interaction) {
   const currentTrack = queue.currentTrack;
   const success = queue.removeTrack(currentTrack);
   return void interaction.followUp(
-    reply(success ? 'Ok, pasamos... ⏭' : 'Algo salio mal! 💩')
+    reply(success ? 'Ok, pasamos... ⏭' : 'Algo salió mal! 💩')
   );
 }
 
@@ -149,6 +149,6 @@ async function stop(interaction) {
   }
   queue.delete();
   return void interaction.followUp(
-    reply('Mambo cortado con éxito. 😬')
+    reply('A mimir? 😕')
   );
 }
