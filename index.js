@@ -58,9 +58,9 @@ client.on('interactionCreate', async interaction => {
     await interaction.followUp(rpl('No estamos en el mismo canal de voz! 📢'));
     return;
   }
-  await interaction.deferReply();
   const query = interaction.options.data[0].value;
   if (query && !query.match(/https/)) {
+    await interaction.deferReply();
     interaction.reply(rpl('Eso es una URL? 🤨'));
     return;
   }
