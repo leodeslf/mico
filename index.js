@@ -1,6 +1,6 @@
 import { Client, GuildMember, GatewayIntentBits } from "discord.js";
 import { Player, QueryType } from "discord-player";
-import slashCommands from "./slashCommands.json";
+import slashCommands from "./slashCommands.json" assert { type: 'json' };
 
 const client = new Client({
   intents: [
