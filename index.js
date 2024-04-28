@@ -65,6 +65,10 @@ client.on('interactionCreate', async interaction => {
   }
 
   await interaction.deferReply();
+
+  console.log(interaction.options);
+  console.log(interaction.options.get("query"));
+
   const query = interaction.options.get("query").value;
 
   if (!query.match(/https/)) {
