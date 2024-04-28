@@ -33,6 +33,9 @@ export default async function play(interaction, query, force) {
   }
   console.debug("CHANELLLL", interaction.guild.members.me);
   try {
+    await player.queues
+      .create(interaction.guildId)
+      .connect(interaction.member.voice.channelId);
     await player.play(
       interaction.guild.members.me.voice.channel,
       searchResults.tracks[0],
