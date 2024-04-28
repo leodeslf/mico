@@ -33,6 +33,7 @@ client.on('messageCreate', async message => {
 });
 
 const player = new Player(client);
+player.extractors.loadDefault();
 const slashCommandPlay = 'toca';
 const slashCommandStop = 'para';
 const slashCommandNext = 'pasa';
@@ -60,10 +61,10 @@ client.on('interactionCreate', async interaction => {
     return;
   }
   const query = interaction.options.data[0].value;
-  if (!query) {
-    await interaction.followUp(rpl('Y la query? 🤨'));
-    return
-  }
+  // if (!query) {
+  //   await interaction.followUp(rpl('Y la query? 🤨'));
+  //   return
+  // }
   // if (query && !query.match(/https/)) {
   //   interaction.followUp(rpl('Eso es una URL? 🤨'));
   //   return;
