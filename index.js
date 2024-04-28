@@ -18,20 +18,14 @@ const prefixLength = prefix.length;
 const commandDeploy = 'deploy';
 
 client.on('messageCreate', async message => {
-  console.log('message create, owner:'); // !DEBUG
-  console.log(client.application.owner); // !DEBUG
-
-  if (!client.application?.owner) await client.application.fetch();
-  
-  console.log('message create after client.application.fetch:'); // !DEBUG
-  console.log(client.application.owner); // !DEBUG
-
+  if (!client.application?.owner) await client.application.fetch();  
+  console.log(message.content); // !DEBUG
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 
   const command = message.content.slice(prefixLength).toLowerCase();
 
-  console.log('message create after safety, command:'); // !DEBUG
-  console.log(command); // !DEBUG
+  // console.log('message create after safety, command:'); // !DEBUG
+  // console.log(command); // !DEBUG
 
   if (command === commandDeploy) {
     await message.guild.commands.set(slashCommands);
