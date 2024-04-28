@@ -40,7 +40,6 @@ const slashCommandNext = 'pasa';
 const rpl = content => ({ content, ephemeral: true });
 
 client.on('interactionCreate', async interaction => {
-  await interaction.deferReply();
   await interaction.guild.fetch();
   if (!interaction.isChatInputCommand()) return;
   await interaction.member.fetch();
@@ -79,6 +78,7 @@ const youtubeUrl = 'https://www.youtube.com/'
 const spotifyUrl = 'https://open.spotify.com/'
 
 async function play(interaction, query) {
+  await interaction.deferReply();
   const searchResults = await player.search(
     query,
     {
