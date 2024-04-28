@@ -26,10 +26,10 @@ client.on('messageCreate', async message => {
   const command = message.content.slice(prefixLength).toLowerCase();
   if (command === commandDeploy) {
     await message.guild.commands.set(slashCommands);
-    await message.reply('Comandos desplegados! 🎤');
+    await message.reply('🐄 ya podés usar `/toca`, `/para`, `/pasa`.');
     return;
   }
-  await message.reply('🤨');
+  await message.reply('🦘 eso no sirve...');
 });
 
 const player = new Player(client);
@@ -48,7 +48,7 @@ client.on('interactionCreate', async interaction => {
     !(interaction.member instanceof GuildMember) ||
     !interaction.member.voice.channel
   ) {
-    await interaction.followUp(rpl('Solo para canales de voz! 📢'));
+    await interaction.followUp(rpl('🦗 primero entrá a un canal de voz...'));
     return;
   }
   if (
@@ -56,7 +56,7 @@ client.on('interactionCreate', async interaction => {
     interaction.member.voice.channelId !==
     interaction.guild.members.me.voice.channelId
   ) {
-    await interaction.followUp(rpl('No estamos en el mismo canal de voz! 📢'));
+    await interaction.followUp(rpl('🦆 unámonos en el mismo canal de voz...'));
     return;
   }
   const query = interaction.options.data[0].value;
@@ -90,7 +90,7 @@ async function play(interaction, query) {
     }
   );
   if (searchResults.isEmpty()) {
-    await interaction.followUp(rpl('Búsqueda sin éxito... 🤔'));
+    await interaction.followUp(rpl('🐝 búsqueda sin éxito...'));
     return;
   }
   await interaction.channel.fetch();
@@ -107,19 +107,19 @@ async function play(interaction, query) {
     }
   } catch {
     player.queues.delete(interaction.guildId);
-    await interaction.followUp(rpl('Mico no pudo unirse al canal de voz! 😭'));
+    await interaction.followUp(rpl('🦖 mico no pudo unirse al canal de voz!'));
     return;
   }
-  await interaction.followUp(
-    rpl(`Cargando ${searchResults.playlist ?
-      `[playlist] **${searchResults.playlist.title}**` :
-      `**${searchResults.tracks[0].title}**`
-      }... ⌛`)
-  );
-
-  // !
-  console.debug('tracks:', searchResults.tracks);
-  console.debug('channel:', interaction.guild.members.me.voice.channel);
+  if (searchResults.playlist) {
+    await interaction.reply(
+      rpl(`🦔 agregando **${searchResults.playlist.title}** (playlist).`)
+    );
+  } else {
+    const { title, duration, author } = searchResults.tracks[0];
+    await interaction.reply(
+      rpl(`🦔 agregando **${title}** (${duration}), de ${author}`)
+    );
+  }
   queue.addTrack(searchResults.tracks);
   if (!queue.isPlaying()) await queue.play(searchResults.tracks);
   await player.play(
@@ -131,29 +131,27 @@ async function play(interaction, query) {
 
 async function next(interaction) {
   await interaction.deferReply();
-  const queue = player.queues.get(interaction.guildId);
+  const queue = player.queues.get(interaction.guild);
   if (!queue || !queue.isPlaying()) {
-    await interaction.followUp(rpl('No hay siguiente... 😶'));
+    await interaction.followUp(rpl('🦧 no quedan más temas.'));
     return;
   }
   const currentTrack = queue.currentTrack;
   const success = queue.removeTrack(currentTrack);
   await interaction.followUp(
-    rpl(success ? 'Ok, pasamos... ⏭' : 'Algo salió mal! 💩')
+    rpl(success ? '🐎 pasando...' : '🐞 no se puedo...')
   );
   return;
 }
 
 async function stop(interaction) {
   await interaction.deferReply();
-  const queue = player.queues.get(interaction.guildId);
+  const queue = player.queues.get(interaction.guild);
   if (!queue || !queue.isPlaying()) {
-    await interaction.followUp(rpl('No hay siguiente... 😶'));
+    await interaction.followUp(rpl('🐌 a quién querés parar?'));
     return;
   }
   queue.delete();
-  await interaction.followUp(
-    rpl('A mimir? 😕')
-  );
+  await interaction.followUp(rpl('🦥 listo, a mimir!'));
   return;
 }
