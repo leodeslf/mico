@@ -42,6 +42,9 @@ client.on('messageCreate', async message => {
 
 const player = new Player(client);
 await player.extractors.loadDefault();
+player.on('error', error => {
+  console.error('Uncaught exception on player:', error);
+});
 const slashCommandToFunctionMap = {
   toca: (interaction, query, force) => play(interaction, query, force),
   pasa: interaction => skip(interaction),
