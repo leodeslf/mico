@@ -8,7 +8,6 @@
         "name": "query",
         "type": 3,
         "description": "URL (YouTube, Spotify), o palabras clave para posterior búsqueda.",
-        "autocomplete": true,
         "required": true
       },
       {

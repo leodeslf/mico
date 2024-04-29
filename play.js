@@ -40,7 +40,7 @@ export default async function play(interaction, query, force) {
   ) {
     await player.queues
       .create(interaction.guildId)
-      .connect(interaction.member.v.voice.channelId);
+      .connect(interaction.member.voice.channelId);
   }
   // try {
   //  // await interaction.guild.fetch();
