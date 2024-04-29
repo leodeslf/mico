@@ -32,8 +32,6 @@ export default async function play(interaction, query, force) {
     });
   }
   /// ! ///
-  console.debug('DEBUG DEBUG DEBUG\nDEBUG DEBUG DEBUG:', interaction.member.voice);
-
   if (interaction.member instanceof GuildMember) {
     const { channel } = interaction.member.voice;
     if (!interaction.guild.members.me.voice.channelId) {

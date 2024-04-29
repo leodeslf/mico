@@ -6,15 +6,17 @@ import { useQueue } from "discord-player";
  */
 export default async function skip(interaction) {
   const queue = useQueue(interaction.guild);
-  if (!queue || !queue.isPlaying()) {
+  if (!queue || !queue.node.isPlaying()) {
     return void await interaction.followUp({
-      content: '🦧 no quedan más temas.',
+      content: '🦧 no estoy tocando nada.',
       ephemeral: true
     });
   }
-  queue.node.skip();
+
   return void await interaction.followUp({
-    content: '🐎 pasando a la siguiente...',
+    content: queue.node.skip() ?
+      '🐎 pasando a la siguiente...' :
+      '🐇 esa era la última...',
     ephemeral: false
   });
 }
