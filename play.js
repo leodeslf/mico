@@ -14,24 +14,23 @@ export default async function play(interaction, query, force) {
     .catch(() => null);
   if (!searchResults?.hasTracks()) {
     return void await interaction.followUp({
-      content: '🐝 búsqueda sin éxito...',
+      content: '🐝 sin resultados de búsqueda...',
       ephemeral: true
     });
   }
   if (searchResults.playlist) {
     const { title, estimatedDuration, author, tracks } = searchResults.playlist;
     await interaction.followUp({
-      content: `🐘 tocando playlist:\n**${title}** (~${estimatedDuration}) [${tracks.length} items]\n*${author}*.`,
+      content: `🐘 tocando playlist...\n**${title}** (~${estimatedDuration}) [${tracks.length} items]\n*${author}*.`,
       ephemeral: false
     });
   } else {
     const { title, duration, author } = searchResults.tracks[0];
     await interaction.followUp({
-      content: `🦔 tocando:\n**${title}** (${duration})\n*${author}*`,
+      content: `🦔 tocando...\n**${title}** (${duration})\n*${author}*`,
       ephemeral: false
     });
   }
-  /// ! ///
   if (interaction.member instanceof GuildMember) {
     const { channel } = interaction.member.voice;
     if (!interaction.guild.members.me.voice.channelId) {
