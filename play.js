@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, GuildMember } from "discord.js";
 import { useMainPlayer/* , useQueue */ } from "discord-player";
 
 /**
@@ -33,36 +33,35 @@ export default async function play(interaction, query, force) {
   }
   /// ! ///
   console.debug('DEBUG DEBUG DEBUG\nDEBUG DEBUG DEBUG:', interaction.member.voice);
-  await interaction.member.fetch();
-  if (
-    !interaction.guild.members.me.voice.channel &&
-    interaction.member.voice
-  ) {
-    await player.queues
-      .create(interaction.guildId)
-      .connect(interaction.member.voice.channelId);
+
+  if (interaction.member instanceof GuildMember) {
+    const { channel } = interaction.member.voice;
+    if (!interaction.guild.members.me.voice.channelId) {
+      await player.queues
+        .create(interaction.guildId)
+        .connect(channel);
+    }
+    try {
+      await player.play(
+        channel,
+        searchResults.tracks[0],
+        {
+          audioPlayerOptions: { queue: true },
+          nodeOptions: {
+            leaveOnEndCooldown: 1000 * 3,
+            leaveOnEmptyCooldown: 1000 * 3,
+            metadata: interaction.channel,
+            repeatMode: 0,
+            volume: 0.5,
+          }
+        }
+      );
+    } catch (error) {
+      await interaction.followUp({
+        content: `🦎 algo salió mal...`,
+        ephemeral: true
+      });
+      console.error(error);
+    }
   }
-  // try {
-  //  // await interaction.guild.fetch();
-  //   await player.play(
-  //     interaction.members.me.voice.channelId,
-  //     searchResults.tracks[0],
-  //     {
-  //       audioPlayerOptions: { queue: true },
-  //       nodeOptions: {
-  //         leaveOnEndCooldown: 1000 * 3,
-  //         leaveOnEmptyCooldown: 1000 * 3,
-  //         metadata: interaction.channel,
-  //         repeatMode: 0,
-  //         volume: 0.5,
-  //       }
-  //     }
-  //   );
-  // } catch (error) {
-  //   await interaction.followUp({
-  //     content: `🦎 algo salió mal...`,
-  //     ephemeral: true
-  //   });
-  //   console.error(error);
-  // }
 }
