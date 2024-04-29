@@ -31,33 +31,38 @@ export default async function play(interaction, query, force) {
       ephemeral: false
     });
   }
-  // *connect
-  if (!interaction.guild.members.me.voice.channel) {
+  /// ! ///
+  console.debug('DEBUG DEBUG DEBUG\nDEBUG DEBUG DEBUG:', interaction.member.voice);
+  await interaction.member.fetch();
+  if (
+    !interaction.guild.members.me.voice.channel &&
+    interaction.member.voice
+  ) {
     await player.queues
       .create(interaction.guildId)
-      .connect(interaction.member.voice.channelId);
+      .connect(interaction.member.v.voice.channelId);
   }
-  // *play
-  try {
-    // await player.play(
-    //   interaction.members.me.voice.channel,
-    //   searchResults.tracks[0],
-    //   {
-    //     audioPlayerOptions: { queue: true },
-    //     nodeOptions: {
-    //       leaveOnEndCooldown: 1000 * 3,
-    //       leaveOnEmptyCooldown: 1000 * 3,
-    //       metadata: interaction.channel,
-    //       repeatMode: 0,
-    //       volume: 0.5,
-    //     }
-    //   }
-    // );
-  } catch (error) {
-    await interaction.followUp({
-      content: `🦎 algo salió mal...`,
-      ephemeral: true
-    });
-    console.error(error);
-  }
+  // try {
+  //  // await interaction.guild.fetch();
+  //   await player.play(
+  //     interaction.members.me.voice.channelId,
+  //     searchResults.tracks[0],
+  //     {
+  //       audioPlayerOptions: { queue: true },
+  //       nodeOptions: {
+  //         leaveOnEndCooldown: 1000 * 3,
+  //         leaveOnEmptyCooldown: 1000 * 3,
+  //         metadata: interaction.channel,
+  //         repeatMode: 0,
+  //         volume: 0.5,
+  //       }
+  //     }
+  //   );
+  // } catch (error) {
+  //   await interaction.followUp({
+  //     content: `🦎 algo salió mal...`,
+  //     ephemeral: true
+  //   });
+  //   console.error(error);
+  // }
 }
