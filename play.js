@@ -34,7 +34,7 @@ export default async function play(interaction, query, force) {
       ephemeral: false
     });
   }
-  // if (interaction.member instanceof GuildMember) {
+  // Code below relies on `interaction.member instanceof GuildMember == true`.
   const { channel } = interaction.member.voice;
   if (!interaction.guild.members.me.voice.channelId) {
     await player.queues
@@ -63,5 +63,4 @@ export default async function play(interaction, query, force) {
     });
     console.error(error);
   }
-  // }
 }
