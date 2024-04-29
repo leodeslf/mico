@@ -12,10 +12,11 @@ export default async function skip(interaction) {
       ephemeral: true
     });
   }
+  queue.node.skip();
   return void await interaction.followUp({
-    content: queue.node.skip() ?
-      `🐎 pasando a la siguiente... (${queue.tracks.data[0].title})` :
-      '🐇 esa era la última.',
+    content: queue.isEmpty() ?
+      '🐇 esa era la última.' :
+      `🐎 pasando a la siguiente... (${queue.tracks.data[0].title})`,
     ephemeral: false
   });
 }

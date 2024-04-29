@@ -52,7 +52,7 @@ export default async function play(interaction, query, force) {
             leaveOnEmptyCooldown: 1000 * 3,
             metadata: interaction.channel,
             repeatMode: 0,
-            volume: 0.5,
+            volume: 0.4,
           }
         }
       );
