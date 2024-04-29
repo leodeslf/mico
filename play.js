@@ -31,25 +31,28 @@ export default async function play(interaction, query, force) {
       ephemeral: false
     });
   }
-  console.debug("CHANELLLL", interaction.guild.members.me);
-  try {
+  // *connect
+  if (!interaction.guild.members.me.voice.channel) {
     await player.queues
       .create(interaction.guildId)
       .connect(interaction.member.voice.channelId);
-    await player.play(
-      interaction.guild.members.me.voice.channel,
-      searchResults.tracks[0],
-      {
-        audioPlayerOptions: { queue: true },
-        nodeOptions: {
-          leaveOnEndCooldown: 1000 * 3,
-          leaveOnEmptyCooldown: 1000 * 3,
-          metadata: interaction.channel,
-          repeatMode: 0,
-          volume: 0.5,
-        }
-      }
-    );
+  }
+  // *play
+  try {
+    // await player.play(
+    //   interaction.members.me.voice.channel,
+    //   searchResults.tracks[0],
+    //   {
+    //     audioPlayerOptions: { queue: true },
+    //     nodeOptions: {
+    //       leaveOnEndCooldown: 1000 * 3,
+    //       leaveOnEmptyCooldown: 1000 * 3,
+    //       metadata: interaction.channel,
+    //       repeatMode: 0,
+    //       volume: 0.5,
+    //     }
+    //   }
+    // );
   } catch (error) {
     await interaction.followUp({
       content: `🦎 algo salió mal...`,
