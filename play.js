@@ -34,34 +34,34 @@ export default async function play(interaction, query, force) {
       ephemeral: false
     });
   }
-  // if (interaction.member instanceof GuildMember) {
-  const { channel } = interaction.member.voice;
-  if (!interaction.guild.members.me.voice.channelId) {
-    await player.queues
-      .create(interaction.guildId)
-      .connect(channel);
-  }
-  try {
-    await player.play(
-      channel,
-      searchResults.tracks[0],
-      {
-        audioPlayerOptions: { queue: true },
-        nodeOptions: {
-          leaveOnEndCooldown: 1000 * 3,
-          leaveOnEmptyCooldown: 1000 * 3,
-          metadata: interaction.channel,
-          repeatMode: 0,
-          volume: 0.5,
+  if (interaction.member instanceof GuildMember) {
+    const { channel } = interaction.member.voice;
+    if (!interaction.guild.members.me.voice.channelId) {
+      await player.queues
+        .create(interaction.guildId)
+        .connect(channel);
+    }
+    try {
+      await player.play(
+        channel,
+        searchResults.tracks[0],
+        {
+          audioPlayerOptions: { queue: true },
+          nodeOptions: {
+            leaveOnEndCooldown: 1000 * 3,
+            leaveOnEmptyCooldown: 1000 * 3,
+            metadata: interaction.channel,
+            repeatMode: 0,
+            volume: 0.5,
+          }
         }
-      }
-    );
-  } catch (error) {
-    await interaction.followUp({
-      content: `🦎 algo salió mal...`,
-      ephemeral: true
-    });
-    console.error(error);
+      );
+    } catch (error) {
+      await interaction.followUp({
+        content: `🦎 algo salió mal...`,
+        ephemeral: true
+      });
+      console.error(error);
+    }
   }
-  // }
 }
