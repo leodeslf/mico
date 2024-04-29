@@ -1,5 +1,8 @@
 import { ChatInputCommandInteraction, GuildMember } from "discord.js";
-import { useMainPlayer/* , useQueue */ } from "discord-player";
+import {
+  useMainPlayer,/* , useQueue */
+  useMetadata
+} from "discord-player";
 
 /**
  * @param {ChatInputCommandInteraction} interaction 
@@ -21,44 +24,44 @@ export default async function play(interaction, query, force) {
   if (searchResults.playlist) {
     const { title, estimatedDuration, author, tracks } = searchResults.playlist;
     await interaction.followUp({
-      content: `🐘 tocando playlist...\n**${title}** (~${estimatedDuration}) [${tracks.length} items]\n*${author}*.`,
+      content: `🐘 tocando playlist desde \`${source}\`...\n**${title}** (~${estimatedDuration}) [${tracks.length} items]\n*${author}*.`,
       ephemeral: false
     });
   } else {
-    const { title, duration, author } = searchResults.tracks[0];
+    const { title, duration, author, source } = searchResults.tracks[0];
     await interaction.followUp({
-      content: `🦔 tocando...\n**${title}** (${duration})\n*${author}*`,
+      content: `🦔 tocando desde \`${source}\`...\n**${title}** (${duration})\n*${author}*`,
       ephemeral: false
     });
   }
-  if (interaction.member instanceof GuildMember) {
-    const { channel } = interaction.member.voice;
-    if (!interaction.guild.members.me.voice.channelId) {
-      await player.queues
-        .create(interaction.guildId)
-        .connect(channel);
-    }
-    try {
-      await player.play(
-        channel,
-        searchResults.tracks[0],
-        {
-          audioPlayerOptions: { queue: true },
-          nodeOptions: {
-            leaveOnEndCooldown: 1000 * 3,
-            leaveOnEmptyCooldown: 1000 * 3,
-            metadata: interaction.channel,
-            repeatMode: 0,
-            volume: 0.5,
-          }
-        }
-      );
-    } catch (error) {
-      await interaction.followUp({
-        content: `🦎 algo salió mal...`,
-        ephemeral: true
-      });
-      console.error(error);
-    }
+  // if (interaction.member instanceof GuildMember) {
+  const { channel } = interaction.member.voice;
+  if (!interaction.guild.members.me.voice.channelId) {
+    await player.queues
+      .create(interaction.guildId)
+      .connect(channel);
   }
+  try {
+    await player.play(
+      channel,
+      searchResults.tracks[0],
+      {
+        audioPlayerOptions: { queue: true },
+        nodeOptions: {
+          leaveOnEndCooldown: 1000 * 3,
+          leaveOnEmptyCooldown: 1000 * 3,
+          metadata: interaction.channel,
+          repeatMode: 0,
+          volume: 0.5,
+        }
+      }
+    );
+  } catch (error) {
+    await interaction.followUp({
+      content: `🦎 algo salió mal...`,
+      ephemeral: true
+    });
+    console.error(error);
+  }
+  // }
 }
